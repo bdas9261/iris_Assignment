@@ -3,6 +3,7 @@ package Stepdefination;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import net.serenitybdd.rest.SerenityRest;
 
@@ -10,6 +11,7 @@ import net.serenitybdd.rest.SerenityRest;
 import static io.restassured.RestAssured.when;
 import static net.serenitybdd.rest.SerenityRest.*;
 import static net.serenitybdd.rest.SerenityRest.then;
+import static org.junit.Assert.assertThat;
 
 
 public class ApiTest {
@@ -41,16 +43,16 @@ public class ApiTest {
          actualPairs = jsonPath.getList("$.rates.AED").size();
         //assertThat(actualPairs).isEqualTo(expectedPairs);
         //double price = Double.parseDouble(responseBody);
-        assertThat(price).isBetween(min).and(max);
+        assertThat(actualPairs).isBetween(min).and(max);
     }
     @Then("the response time should not be less than {int} seconds")
-    public void the_response_time_should_not_be_less_than_seconds(Integer int1) {
+    public void the_response_time_should_not_be_less_than_seconds(Integer minResponseTime) {
         long actualResponseTime = SerenityRest.then().extract().time();
         assertThat(actualResponseTime).isGreaterThanOrEqualTo(minResponseTime * 1000);
 
     }
     @Then("the response should contain {int} currency coin pairs")
-    public void the_response_should_contain_currency_coin_pairs(Integer int1) {
+    public void the_response_should_contain_currency_coin_pairs(Integer expectedPairs) {
         String responseBody = SerenityRest.then().extract().body().asString();
         JsonPath jsonPath = new JsonPath(responseBody);
         int actualPairs = jsonPath.getList("$.rates").size();
